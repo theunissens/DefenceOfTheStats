@@ -21,7 +21,7 @@ static size_t _GoStringLen(_GoString_ s) { return (size_t)s.n; }
 __attribute__ ((unused))
 static const char *_GoStringPtr(_GoString_ s) { return s.p; }
 
-#line 3 "/home/taffer/dev/projects/helloworld/gl/move.go"
+#line 3 "/home/taffer/dev/projects/DefenceOfTheStats/helloworld/gl/move.go"
 
 #include <GL/glut.h>
 #include <stdio.h>

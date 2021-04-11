@@ -1,11 +1,20 @@
+install:
+	@echo "Installing Vulkan"
 
-say_hello:
-	@echo "Hello World"
+	# Install Vulkan tools
+	sudo apt install vulkan-tools libvulkan-dev vulkan-validationlayers-dev spirv-tools
+	# Install GLFW, used to created platform agnostic window.
+	sudo apt install libglfw3-dev
+	# Install GLM, a library containing linear algebra operations.
+	sudo apt install libglm-dev
 
+	@echo "Vulkan installation complete"
 build:
 	@echo "Creating empty text files..."
+
 	go tool cgo -exportheader gl/_cgo_export.h  gl/move.go
 	go build
 
-clean:
-	@echo "Cleaning up..."
+	@echo "Creating empty text files..."
+run:
+	./helloworld

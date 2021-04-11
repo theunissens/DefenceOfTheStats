@@ -1,25 +1,39 @@
 package gl
 
+// We are missing '-lXxf86vm' and '-lXi' from the LDFLAGS. We don't have them installed
+// and we do not know what they do...
+
 /*
-#cgo LDFLAGS: -lGL -lglut -lGLU -lm
+#cgo LDFLAGS: -lglfw -lvulkan -ldl -lpthread -lX11 -lXrandr
 #include <GL/glut.h>
 #include <stdio.h>
 #include <_cgo_export.h>
 
-void doThing(unsigned char key, int x, int y)
+#define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
+
+// vk_version wraps VK_MAKE_VERSION. VK_MAKE_VERSION is a Macro. cgo does not play well
+// with macros, and we therefore wrap it.
+uint vk_version(const int major, const int minor, const int patch)
 {
-	// glEnd();
-	goStart(key, x, y);
+	return VK_MAKE_VERSION(major, minor, patch);
 }
+
+void exit_window(unsigned char key, int x, int y)
+{
+	//esc(key, x, y);
+}
+
+void key_press(int key, int x, int y)
+{
+        //keyPress(key, x, y);
+}
+
 
 */
 import "C"
-import (
-	"unsafe"
-)
 
 func Init() {
-	//C.myinit()
 	initWindow()
 }
 
@@ -28,70 +42,52 @@ var (
 )
 
 func initWindow() {
-	a := C.CString("a")
+	/*a := C.CString("a")
 	var i C.int
-	//	a := *C.char(&aa)
-	//ii := 0
-	//	i := C.int(0)
+
 	C.glutInit(&i, &a)
+
+	C.glutInitWindowSize(800, 800);
 	C.glutCreateWindow(C.CString("ABGR extension"))
 
-	keyhitfunc := keyhit
-	keyhitfunc1 := &keyhitfunc
-	keyhitfunc2 := unsafe.Pointer(keyhitfunc1)
+	C.glutKeyboardFunc((*[0]byte)(C.exit_window))
+	C.glutSpecialFunc((*[0]byte)(C.key_press))
 
-	//	_ = escfunc2
-	_ = keyhitfunc2
+	C.glutMainLoop()*/
 
-	C.glutKeyboardFunc((*[0]byte)(C.doThing)) // use esc here
-	//C.glutKeyboardFunc((*[0]byte)(escfunc2)) // use esc here
-	//C.glutSpecialFunc((*[0]byte)(C.keyhit))
-	//C.glutSpecialFunc((*[0]byte)(keyhitfunc2))
-	C.glutMainLoop()
-}
+	C.glfwInit()
 
-func draw() {
-	C.glMatrixMode(C.GL_PROJECTION)
-	C.glLoadIdentity()
+	C.glfwWindowHint(C.GLFW_CLIENT_API, C.GLFW_NO_API)
+	C.glfwWindowHint(C.GLFW_RESIZABLE, C.GLFW_TRUE)
 
-	C.glColor3d(0.5, 0.5, 0.5)
-	C.glBegin(C.GL_POLYGON)
+	name := C.CString("Vulkan window")
+	window := C.glfwCreateWindow(800, 600, name, nil, nil)
 
-	C.glVertex2d(boxX, boxY)
-	C.glVertex2d(boxX+0.2, boxY)
-	C.glVertex2d(boxX+0.2, boxY+0.2)
-	C.glVertex2d(boxX, boxY+0.2)
+	createInstance()
 
-	C.glEnd()
+	//uint32_t extensionCount = 0;
+	//vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
 
-	C.glFinish()
-}
-
-func keyhit(key C.int, xx C.int, yy C.int) {
-	C.glClear(C.GL_COLOR_BUFFER_BIT)
-
-	switch key {
-	case C.GLUT_KEY_UP:
-		boxY = boxY + 0.1
-		draw()
-
-		break
-
-	case C.GLUT_KEY_DOWN:
-		boxY = boxY - 0.1
-		draw()
-
-		break
-
-	case C.GLUT_KEY_LEFT:
-		boxX = boxX - 0.1
-		draw()
-
-		break
-	case C.GLUT_KEY_RIGHT:
-		boxX = boxX + 0.1
-		draw()
-
-		break
+	// Keep the application running until either the program is closed, or an error occurs.
+	for C.glfwWindowShouldClose(window) == 0 {
+		C.glfwPollEvents()
 	}
+
+	// Cleanup.
+	C.glfwDestroyWindow(window)
+
+	C.glfwTerminate()
+}
+
+// createInstance initialises the library and feeds information about the application
+// to the Vulkan library. This information will be provided to the driver and may be
+// helpful in optimizing the application.
+func createInstance() {
+	appInfo := &C.VkApplicationInfo{}
+	appInfo.sType = C.VK_STRUCTURE_TYPE_APPLICATION_INFO
+	appInfo.pApplicationName = C.CString("Hello Triangle")
+	appInfo.applicationVersion = C.vk_version(1, 0, 0)
+	appInfo.pEngineName = C.CString("No Engine")
+	//appInfo.engineVersion = C.VK_MAKE_VERSION(1, 0, 0)
+	appInfo.apiVersion = C.VK_API_VERSION_1_0
 }
