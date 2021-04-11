@@ -1,0 +1,6 @@
+We can now move objects!
+
+Now we need to clean up and put things in a nice structure.
+While the information is fresh, we should document things so we can come back to it later.
+
+Soon we will start on the networking ;)

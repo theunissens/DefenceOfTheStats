@@ -1,0 +1,75 @@
+
+void redraw()
+{
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+
+        glColor3d(0.5, 0.5, 0.5);
+        glBegin(GL_POLYGON);
+
+        glVertex2d(boxX, boxY);
+        glVertex2d(boxX + 0.2, boxY);
+        glVertex2d(boxX + 0.2, boxY + 0.2);
+        glVertex2d(boxX, boxY + 0.2);
+
+        glEnd();
+
+        glFinish();
+}
+
+void esckeyhit(unsigned char key, int x, int y)
+{
+        switch (key) {
+        case 27:
+                exit(0);
+        }
+}
+
+
+void keyhit(int key, int xx, int yy)
+{
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        switch (key) {
+        case GLUT_KEY_UP:
+                boxY = boxY + 0.1;
+                redraw();
+
+                break;
+
+        case GLUT_KEY_DOWN:
+                boxY = boxY - 0.1;
+                redraw();
+
+                break;
+
+        case GLUT_KEY_LEFT:
+                boxX = boxX - 0.1;
+                redraw();
+
+                break;
+        case GLUT_KEY_RIGHT:
+                boxX = boxX + 0.1;
+                redraw();
+
+                break;
+        }
+}
+
+void myinit()
+{
+        char v1 = 'a';
+        char *p1 = &v1;
+        char **p2 = &p1;
+        int i = 0;
+        int *j = &i;
+        glutInit(j, p2);
+        glutCreateWindow("ABGR extension");
+
+
+        glutKeyboardFunc(esckeyhit); // use esc here
+        glutSpecialFunc(keyhit);
+        glutMainLoop();
+}
+*/
+
