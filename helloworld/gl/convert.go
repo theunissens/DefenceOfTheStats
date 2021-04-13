@@ -1,10 +1,7 @@
 package gl
 
-// We are missing '-lXxf86vm' and '-lXi' from the LDFLAGS. We don't have them installed
-// and we do not know what they do...
-
 /*
-#cgo LDFLAGS: -lglfw -lvulkan -ldl -lpthread -lX11 -lXrandr
+#cgo LDFLAGS: -lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi
 #include <GL/glut.h>
 #include <stdio.h>
 #include <_cgo_export.h>
@@ -29,13 +26,44 @@ void key_press(int key, int x, int y)
         //keyPress(key, x, y);
 }
 
+VkResult create_instance(VkInstance instance)
+{
+	struct VkApplicationInfo appInfo;
+    	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+    	appInfo.pApplicationName = "Hello Triangle";
+    	appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
+    	appInfo.pEngineName = "No Engine";
+    	appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
+    	appInfo.apiVersion = VK_API_VERSION_1_0;
+
+	struct VkInstanceCreateInfo createInfo;
+	createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+	createInfo.pApplicationInfo = &appInfo;
+
+	uint32_t glfwExtensionCount = 0;
+	const char** glfwExtensions;
+
+	glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+
+	createInfo.enabledExtensionCount = glfwExtensionCount;
+	createInfo.ppEnabledExtensionNames = glfwExtensions;
+
+	createInfo.enabledLayerCount = 0;
+
+	VkResult result = vkCreateInstance(&createInfo, NULL, &instance);
+	return result;
+}
+
 
 */
 import "C"
+import "fmt"
 
 func Init() {
 	initWindow()
 }
+
+var instance C.VkInstance
 
 var (
 	boxX, boxY C.double
@@ -79,15 +107,40 @@ func initWindow() {
 	C.glfwTerminate()
 }
 
-// createInstance initialises the library and feeds information about the application
-// to the Vulkan library. This information will be provided to the driver and may be
-// helpful in optimizing the application.
+// createInstance initialises the Vulkan library and feeds information about the
+// application to the Vulkan library. This information will be provided to the
+// driver and may be helpful in optimizing the application.
 func createInstance() {
-	appInfo := &C.VkApplicationInfo{}
+	/*appInfo := C.VkApplicationInfo{}
 	appInfo.sType = C.VK_STRUCTURE_TYPE_APPLICATION_INFO
 	appInfo.pApplicationName = C.CString("Hello Triangle")
 	appInfo.applicationVersion = C.vk_version(1, 0, 0)
 	appInfo.pEngineName = C.CString("No Engine")
-	//appInfo.engineVersion = C.VK_MAKE_VERSION(1, 0, 0)
+	appInfo.engineVersion = C.vk_version(1, 0, 0)
 	appInfo.apiVersion = C.VK_API_VERSION_1_0
+
+	createInfo := C.VkInstanceCreateInfo{}
+	createInfo.sType = C.VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO
+	createInfo.pApplicationInfo = &appInfo
+
+	var glfwExtensionCount C.uint
+	var glfwExtensions **C.char
+
+	glfwExtensions = C.glfwGetRequiredInstanceExtensions(&glfwExtensionCount)
+
+	createInfo.enabledExtensionCount = glfwExtensionCount
+	createInfo.ppEnabledExtensionNames = glfwExtensions
+
+	createInfo.enabledLayerCount = 0
+
+	result := C.vkCreateInstance(&createInfo, nil, &instance)
+	if result != C.VK_SUCCESS {
+		panic(fmt.Sprintf("failed to create instance, result: %v", result))
+	}*/
+
+	result := C.create_instance(instance)
+	if result != C.VK_SUCCESS {
+		panic(fmt.Sprintf("failed to create instance, result: %v", result))
+	}
+
 }

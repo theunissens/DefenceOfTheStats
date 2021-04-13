@@ -8,6 +8,10 @@ install:
 	# Install GLM, a library containing linear algebra operations.
 	sudo apt install libglm-dev
 
+	# https://packages.debian.org/sid/x11/xorg-dev
+	# This is needed for '-lXxf86vm' and '-lXi'.
+	sudo apt-get install xorg-dev
+
 	@echo "Vulkan installation complete"
 build:
 	@echo "Creating empty text files..."
