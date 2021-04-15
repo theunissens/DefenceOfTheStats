@@ -16,16 +16,6 @@ uint vk_version(const int major, const int minor, const int patch)
 	return VK_MAKE_VERSION(major, minor, patch);
 }
 
-void exit_window(unsigned char key, int x, int y)
-{
-	//esc(key, x, y);
-}
-
-void key_press(int key, int x, int y)
-{
-        //keyPress(key, x, y);
-}
-
 VkResult create_instance(VkInstance instance)
 {
 	struct VkApplicationInfo appInfo;
@@ -50,7 +40,35 @@ VkResult create_instance(VkInstance instance)
 
 	createInfo.enabledLayerCount = 0;
 
+	printf("WTF\n");
 	VkResult result = vkCreateInstance(&createInfo, NULL, &instance);
+	printf("res: %d", result);
+	if (result != VK_SUCCESS)
+	{
+		printf("HEELELELLELELELELEL\n");
+		// Print out all extensions, so we know what extensions we have.
+		uint32_t extensionCount = 0;
+		vkEnumerateInstanceExtensionProperties(NULL, &extensionCount, NULL);
+
+		printf("size: %d\n", extensionCount);
+
+		VkExtensionProperties extensions[extensionCount];
+		VkResult exResult = vkEnumerateInstanceExtensionProperties(NULL, &extensionCount, extensions);
+		if (exResult != VK_SUCCESS)
+		{
+			printf("failed: %d\n", exResult);
+		}
+
+
+		printf("size: %d\n", extensionCount);
+
+		for (int i = 0; i < extensionCount; i++) {
+    			printf("%s\n", extensions[i].extensionName);
+		}
+	}
+
+	//vkDestroyInstance(instance, NULL);
+
 	return result;
 }
 
@@ -102,6 +120,8 @@ func initWindow() {
 	}
 
 	// Cleanup.
+	C.vkDestroyInstance(instance, nil)
+
 	C.glfwDestroyWindow(window)
 
 	C.glfwTerminate()
