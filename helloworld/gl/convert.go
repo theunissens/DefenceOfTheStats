@@ -16,6 +16,30 @@ uint vk_version(const int major, const int minor, const int patch)
 	return VK_MAKE_VERSION(major, minor, patch);
 }
 
+void print_extensions_test()
+{
+	printf("HEELELELLELELELELEL\n");
+	// Print out all extensions, so we know what extensions we have.
+	uint32_t extensionCount = 0;
+	VkResult result = vkEnumerateInstanceExtensionProperties(NULL, &extensionCount, NULL);
+
+	printf("size: %d\n", extensionCount);
+
+	VkExtensionProperties extensions[extensionCount];
+	result = vkEnumerateInstanceExtensionProperties(NULL, &extensionCount, extensions);
+	if (result != VK_SUCCESS)
+	{
+		printf("failed: %d\n", result);
+	}
+
+
+	printf("size: %d\n", extensionCount);
+
+	for (int i = 0; i < extensionCount; i++) {
+		printf("%s\n", extensions[i].extensionName);
+	}
+}
+
 VkResult create_instance(VkInstance instance)
 {
 	struct VkApplicationInfo appInfo;
@@ -33,6 +57,17 @@ VkResult create_instance(VkInstance instance)
 	uint32_t glfwExtensionCount = 0;
 	const char** glfwExtensions;
 
+	int sup;
+	sup = glfwVulkanSupported();
+	if (sup == GLFW_TRUE)
+	{
+		printf("supported");
+	}
+	if (sup == GLFW_FALSE)
+	{
+		printf("unsupported");
+	}
+
 	glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
 	createInfo.enabledExtensionCount = glfwExtensionCount;
@@ -40,38 +75,56 @@ VkResult create_instance(VkInstance instance)
 
 	createInfo.enabledLayerCount = 0;
 
-	printf("WTF\n");
+	printf("WTF: %d\n", glfwExtensionCount);
 	VkResult result = vkCreateInstance(&createInfo, NULL, &instance);
-	printf("res: %d", result);
-	if (result != VK_SUCCESS)
-	{
-		printf("HEELELELLELELELELEL\n");
-		// Print out all extensions, so we know what extensions we have.
-		uint32_t extensionCount = 0;
-		vkEnumerateInstanceExtensionProperties(NULL, &extensionCount, NULL);
+	//printf("res: %d\n", result);
+	//if (1 == 2)
+	//{
+	//	printf("HEELELELLELELELELEL\n");
+	//	// Print out all extensions, so we know what extensions we have.
+	//	uint32_t extensionCount = 0;
+	//	VkResult quaff;
+	//	quaff = vkEnumerateInstanceExtensionProperties(NULL, &extensionCount, NULL);
+	//	printf("res: %d\n", quaff);
+	//	switch (quaff)
+	//	{
+	//		case VK_SUCCESS:
+	//			printf("success");
+	//		case VK_INCOMPLETE:
+	//			printf("success 0");
+	//		case VK_ERROR_OUT_OF_HOST_MEMORY:
+	//			printf("success 1");
+	//		case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+	//			printf("success 2");
+	//		case VK_ERROR_LAYER_NOT_PRESENT:
+	//			printf("success 3");
+	//		default:
+	//			printf("default");
+	//	}
 
-		printf("size: %d\n", extensionCount);
+	//	//printf("size: %d\n", extensionCount);
 
-		VkExtensionProperties extensions[extensionCount];
-		VkResult exResult = vkEnumerateInstanceExtensionProperties(NULL, &extensionCount, extensions);
-		if (exResult != VK_SUCCESS)
-		{
-			printf("failed: %d\n", exResult);
-		}
+	//	//VkExtensionProperties extensions[extensionCount];
+	//	//result = vkEnumerateInstanceExtensionProperties(NULL, &extensionCount, extensions);
+	//	//if (result != VK_SUCCESS)
+	//	//{
+	//	//	printf("failed: %d\n", result);
+	//	//}
 
 
-		printf("size: %d\n", extensionCount);
+	//	//printf("size: %d\n", extensionCount);
 
-		for (int i = 0; i < extensionCount; i++) {
-    			printf("%s\n", extensions[i].extensionName);
-		}
-	}
+	//	//for (int i = 0; i < extensionCount; i++) {
+	//    	//	printf("%s\n", extensions[i].extensionName);
+	//	//}
+
+	//	//print_extensions_test();
+	//}
 
 	//vkDestroyInstance(instance, NULL);
 
-	return result;
+	//return result;
 }
-
 
 */
 import "C"
