@@ -7,47 +7,55 @@
 
 VkInstance instance;
 
+VkInstanceCreateInfo createInfo;
+
 //gcc stg.c -lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi
 
-VkInstance createInstance()
+VkApplicationInfo create_app_info()
 {
-	// remove soon.
-	glfwInit();
+	VkApplicationInfo app_info = {
+		.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
+		.pApplicationName = "Hello Triangle",
+		.applicationVersion = VK_MAKE_VERSION(1, 0, 0),
+		.pEngineName = "No Engine",
+		.engineVersion = VK_MAKE_VERSION(1, 0, 0),
+		.apiVersion = VK_API_VERSION_1_0,
+	};
 
-	struct VkApplicationInfo appInfo;
-	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-	appInfo.pApplicationName = "Hello Triangle";
-	appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-	appInfo.pEngineName = "No Engine";
-	appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-	appInfo.apiVersion = VK_API_VERSION_1_0;
+	
+	return app_info;
+}
 
-	struct VkInstanceCreateInfo createInfo;
-	createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+VkInstance create_instance(VkApplicationInfo appInfo, VkStructureType s_type)
+{
+	
+	createInfo.sType = s_type;
 	createInfo.pApplicationInfo = &appInfo;
 
-	uint32_t glfwExtensionCount = 0;
-	const char** glfwExtensions;
+	uint32_t glfwExtensionCount = 1;
 	
+
+	const char** glfwExtensions;
 	glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
 	int sup;
 	sup = glfwVulkanSupported();
 	if (sup == GLFW_TRUE)
 	{
-		printf("supported");
-	}
+		printf("supported\n");
+       	}
 	if (sup == GLFW_FALSE)
 	{
-		printf("unsupported");
-	}
-
-
-	printf("count: %d\n", glfwExtensionCount);
-	printf("extensions: %c\n", **glfwExtensions);
+		printf("unsupported"); 
+	} 
 	
+	printf("count: %d\n", glfwExtensionCount);
+	for (int i = 0; i < glfwExtensionCount; i++)
+	{
+		printf("extensions: %s\n", glfwExtensions[i]);
+	}
+		
 	createInfo.enabledExtensionCount = glfwExtensionCount;
-	//createInfo.enabledExtensionCount = 1;
 	createInfo.ppEnabledExtensionNames = glfwExtensions;
 	
 	createInfo.enabledLayerCount = 0;
@@ -58,7 +66,7 @@ VkInstance createInstance()
 	//	printf("create instance failed: %d\n", result);
 	//}	
 
-	//return instance;
+	return instance;
 }
 
 GLFWwindow* init()
@@ -91,14 +99,15 @@ void teardown(GLFWwindow* window, VkInstance instance)
 
 }
 
-int main() {
-	//GLFWwindow* window = init();
-	VkInstance instance = createInstance();
+//int main() {
+//	GLFWwindow* window = init();
+//
+//	VkApplicationInfo app_info = create_app_info();
+//
+//	VkInstance instance = createInstance(app_info);
 //	render(window);
-	//teardown(window, instance);
-	
-	//vkDestroyInstance(instance, NULL);
-
-	return 0;
-}
+//	teardown(window, instance);
+//	
+//	return 0;
+//}
 
